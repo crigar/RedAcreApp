@@ -1,17 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { withGoogleMap, withScriptjs, GoogleMap, Marker, Polyline } from 'react-google-maps';
 import { MAIN_POINTS } from './../../utilities/constants';
 import RouteService from './../../servicies/route.service';
+import SecondsMovement from './../secondsMovement/secondsMovement.component';
 
 export default ({listId}) => {
-
+  let [secondsMovement, setSeconds] = useState(1);
   let path = RouteService.getPath(listId);
   console.log(listId)
   class Map extends React.Component {
     state = {
       progress: [],
     }
-    velocity = 5
+    velocity = secondsMovement;
     initialDate = new Date()
   
     getDistance = () => {
@@ -111,10 +112,13 @@ export default ({listId}) => {
   }
   const MapComponent = withScriptjs(withGoogleMap(Map))
   return (
-  <MapComponent
-    googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"
-    loadingElement={<div style={{ height: `100%` }} />}
-    containerElement={<div style={{ height: `400px`, width: '800px' }} />}
-    mapElement={<div style={{ height: `100%` }} />}
-  />
+    <div>
+      <SecondsMovement toggleSeconds={(seconds) => setSeconds(seconds)}></SecondsMovement>
+      <MapComponent
+        googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"
+        loadingElement={<div style={{ height: `100%` }} />}
+        containerElement={<div style={{ height: `400px`, width: '900px' }} />}
+        mapElement={<div style={{ height: `100%` }} />}
+      />
+    </div>
 )}
