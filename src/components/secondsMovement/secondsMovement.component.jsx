@@ -1,11 +1,14 @@
 import React, { Fragment, useState } from 'react';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
-import './secondsMovement.component.scss'
-export default function SecondsMovement({toggleSeconds}) {
+import './secondsMovement.component.scss';
+import RouteService from './../../servicies/route.service';
+
+export default function SecondsMovement({tooggleSeconds}) {
     
     const handleSeconds = (seconds) => {
-        toggleSeconds(seconds)
+        RouteService.setSecondsToMovement(seconds);
+        RouteService.setStartPointReferenceDate(new Date());
     }
     return (
         <div className="seconds-container">
