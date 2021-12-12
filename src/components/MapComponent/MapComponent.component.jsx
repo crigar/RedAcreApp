@@ -6,28 +6,34 @@ import SecondsMovement from './../secondsMovement/secondsMovement.component';
 
 export default ({listId}) => {
   let path = [];
+  let lats = {};
+  let lngs = {};
+  let startPointReference;
   let addPathPoint = (newPoint) => {
-    path.push(newPoint);
-
+    if (!lats[newPoint.lat]  && !lngs[newPoint.lng]) {
+      path.push(newPoint);
+      lats[newPoint.lat] = true;
+      lngs[newPoint.lng] = true;
+    }
   }
   RouteService.createConection(addPathPoint);
-  RouteService.setStartPointReferenceDate(new Date());
-  
   class Map extends React.Component {
     state = {
       progress: [],
     }
+    initialDate = new Date();
+    speed = 10;
     getDistance = () => {
       // seconds between when the component loaded and now
-      const differentInTime = (new Date() - RouteService.getStartPointReferenceDate()) / 1000 // pass to seconds
-      return differentInTime * RouteService.getSecondsToMovement() // d = v*t -- thanks Newton!
+      const differentInTime = (new Date() - this.initialDate) / 1000 // pass to seconds
+      return differentInTime * this.speed // d = v*t -- thanks Newton!
     }
   
     componentDidMount = () => {
       this.interval = window.setInterval(this.moveObject, 1000)
     }
   
-    componentWillUnmount = () => {      
+    componentWillUnmount = () => {    
       window.clearInterval(this.interval)
     }
   
@@ -66,16 +72,16 @@ export default ({listId}) => {
         nextLineLatLng,
         percentage
       )
-  
+      startPointReference = { lat: position.lat(), lng: position.lng() };
       progress = progress.concat(position)
       this.setState({ progress })
     }
 
     checkPath = () => { 
       if (path.length == 0){
-        RouteService.getNextPoint('init');
+        RouteService.callSocket(JSON.stringify({ type: 'init', routeId: listId  }));
       } 
-      RouteService.getNextPoint('next')
+      RouteService.callSocket(JSON.stringify({ type: 'next', routeId: listId  }));
       path = path.map((coordinates, i, array) => {
         if (i === 0) {
           return { ...coordinates, distance: 0 } // it begins here! 
@@ -91,7 +97,6 @@ export default ({listId}) => {
           latLong1,
           latLong2
         )
-  
         return { ...coordinates, distance }
       })
     }
@@ -99,17 +104,28 @@ export default ({listId}) => {
     componentWillMount = () => {
       this.checkPath();
     }
+
+    changeSpeed = () => {
+      let index = path.length - 1;
+      path = [startPointReference];
+      this.state.progress = [startPointReference];
+      lats = {};
+      lngs = {};
+      this.speed = RouteService.getSpeed();
+      RouteService.callSocket(JSON.stringify({ type: 'setIndex', index: index, routeId: listId }));
+      RouteService.setTriggerInitialPoint(false);
+    }
   
     render = () => {
+      if (RouteService.getTriggerInitialPoint()) {
+        this.changeSpeed();
+      }
       return (
         <GoogleMap
           defaultZoom={16}
-          defaultCenter={ MAIN_POINTS.defaultCenter }
+          defaultCenter={ MAIN_POINTS.defaultCenter[listId] }
           >
-            {/* <Marker position={ MAIN_POINTS.house } /> */}
-            <Marker position={ MAIN_POINTS.job } />
-            <Polyline path={path} options={{ strokeColor: "#FF0000 " }} />
-            
+            <Polyline path={path} options={{ strokeColor: "#FF0000 "}} />
             {(
             <>
               <Polyline path={this.state.progress} options={{ strokeColor: "#FF0000 "}} />

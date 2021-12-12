@@ -1,9 +1,7 @@
 import React, { Fragment, useState } from 'react';
-import Grid from '@mui/material/Grid';
 import './list.component.scss';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 
 export default function List({toggleList}) {
     const handleList = (seconds) => {
@@ -14,8 +12,8 @@ export default function List({toggleList}) {
             <h3 cla>Routes</h3>
             <ButtonGroup variant="outlined" aria-label="outlined button group" orientation="vertical">
                 <Button onClick={handleList.bind(this, 1)}>House to the office</Button>
-                <Button onClick={handleList.bind(this, 2)}>Office to the house</Button>
-                <Button onClick={handleList.bind(this, 3)}>Go for lunch</Button>
+                <Button onClick={handleList.bind(this, 2)}>Go for lunch</Button>
+                <Button onClick={handleList.bind(this, 3)}>Office to the house</Button>
             </ButtonGroup>
         </Fragment>
     );

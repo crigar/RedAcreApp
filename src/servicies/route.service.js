@@ -2,41 +2,33 @@ import CoorUtilities from './../utilities/coor.utilities';
 
 let socket = new WebSocket('ws://localhost:8000');
 let callBackSaved;
-let secondsMovement = 10;
-let lastPoint = {lat: 0, lng: 0};
-let startPointReferenceDate;
+let speed = 20;
+let triggerInitialPoint = false;
 
 const RouteService = {
     createConection(callBackk) {
         callBackSaved = callBackk;
         socket.addEventListener('open', event => console.log('conected'));
     },
-    getNextPoint(point) {       
-        socket.send(point);
+    callSocket(info) {       
+        socket.send(info);
         socket.addEventListener('message', event => {
             callBackSaved(JSON.parse(event.data));
         } );      
     },
-    setSecondsToMovement(seconds) {
-        secondsMovement = seconds;
+    
+    setSpeed(newSpeed) {
+        speed = newSpeed;
     },
-    getSecondsToMovement() {
-        return secondsMovement;
+    getSpeed() {
+        return speed;
     },
-    setStartPointReferenceDate(date) {
-        startPointReferenceDate = date;
+    setTriggerInitialPoint(value) {
+        triggerInitialPoint = value;
     },
-    getStartPointReferenceDate() {
-        return startPointReferenceDate;
-    },
-    setLastPoint(point) {
-        lastPoint = point;
-    },
-    getLastPoint() {
-        return lastPoint;
-    },
- 
-
+    getTriggerInitialPoint() {
+        return triggerInitialPoint;
+    }
 }
 
 export default RouteService;

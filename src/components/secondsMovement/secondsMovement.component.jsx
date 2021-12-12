@@ -7,8 +7,8 @@ import RouteService from './../../servicies/route.service';
 export default function SecondsMovement({tooggleSeconds}) {
     
     const handleSeconds = (seconds) => {
-        RouteService.setSecondsToMovement(seconds);
-        RouteService.setStartPointReferenceDate(new Date());
+        RouteService.setSpeed(seconds);
+        RouteService.setTriggerInitialPoint(true);
     }
     return (
         <div className="seconds-container">

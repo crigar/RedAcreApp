@@ -11,7 +11,6 @@ function App() {
       <div className="app-container">
       <h1 className="title">Movements Monitor {listId}</h1>
       <div className="seconds-movement">
-          
         </div>
         <div className="map-container">
           <div className="list">
